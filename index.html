@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>孕期营养食谱 - 周计划点餐版</title>
+    <title>孕妈安心餐 - 健康点餐平台</title>
     <style>
         * {
             margin: 0;
@@ -13,1442 +13,256 @@
         }
 
         body {
-            background-color: #f9f3f5;
-            color: #333;
+            background-color: #fff5f7;
+            color: #555;
             padding-bottom: 70px;
         }
 
-        /* 顶部导航栏 */
-        .header {
-            background-color: #f8bbd0;
-            padding: 15px 20px;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .header h1 {
-            font-size: 22px;
-            color: #d81b60;
-        }
-
-        /* 分类筛选栏 */
-        .category {
-            display: flex;
-            padding: 10px;
-            gap: 8px;
-            overflow-x: auto;
-            background: white;
-            margin: 10px 0;
-        }
-
-        .category button {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 20px;
-            background: #fce4ec;
-            color: #d81b60;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .category button.active {
-            background: #d81b60;
+        header {
+            background-color: #ff9bbb;
             color: white;
+            padding: 18px 20px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 2px 10px #ffd6e3;
         }
 
-        /* 食谱列表 */
-        .recipe-list {
-            padding: 0 15px;
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin: 15px 0;
+            color: #ff7a9c;
+            font-weight: bold;
+            border-left: 5px solid #ff9bbb;
+            padding-left: 10px;
+        }
+
+        .food-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
-        /* 食谱卡片 */
-        .recipe-card {
+        .food-item {
             background: white;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            cursor: pointer;
-            transition: 0.3s;
+            box-shadow: 0 2px 8px #ffd6e3;
         }
 
-        .recipe-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .recipe-image {
+        .food-img {
             width: 100%;
-            height: 180px;
+            height: 110px;
             object-fit: cover;
-            background-color: #fce4ec;
         }
 
-        .recipe-info {
-            padding: 12px;
+        .food-info {
+            padding: 10px;
         }
 
-        .recipe-title {
-            font-size: 16px;
+        .food-name {
+            font-size: 15px;
             font-weight: bold;
-            margin-bottom: 5px;
-            color: #333;
+            margin-bottom: 4px;
         }
 
-        .recipe-tag {
-            display: inline-block;
-            padding: 3px 8px;
+        .food-desc {
             font-size: 12px;
-            background: #f8bbd0;
-            color: #d81b60;
-            border-radius: 4px;
-            margin-right: 5px;
+            color: #999;
+            margin-bottom: 6px;
         }
 
-        /* 底部导航 */
-        .tab-bar {
+        .food-price {
+            color: #ff5c8a;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .add-cart {
+            background: #ff9bbb;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 8px;
+            margin-top: 6px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .cart {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
             background: white;
+            padding: 15px 20px;
+            box-shadow: 0 -2px 10px #ffd6e3;
             display: flex;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
-            z-index: 100;
-        }
-
-        .tab-item {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            cursor: pointer;
-            color: #999;
-            position: relative;
-        }
-
-        .tab-item.active {
-            color: #d81b60;
-        }
-
-        .tab-item .badge {
-            position: absolute;
-            top: 5px;
-            right: 20px;
-            background: #ff4081;
-            color: white;
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 10px;
-            min-width: 16px;
-        }
-
-        .tab-item i {
-            font-size: 20px;
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        .tab-item span {
-            font-size: 12px;
-        }
-
-        /* 弹窗详情 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
         }
 
-        .modal-content {
-            background: white;
-            width: 90%;
-            max-width: 500px;
-            max-height: 85vh;
-            overflow-y: auto;
-            border-radius: 15px;
-            padding: 20px;
-            position: relative;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 24px;
-            cursor: pointer;
-            color: #999;
-        }
-
-        .modal-image {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            background-color: #fce4ec;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            color: #d81b60;
-            margin-bottom: 10px;
-        }
-
-        .modal-desc {
-            line-height: 1.6;
-            margin: 10px 0;
-        }
-
-        .ingredients-list {
-            background: #fce4ec;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-        }
-
-        .ingredients-list h4 {
-            margin-bottom: 8px;
-            color: #d81b60;
-        }
-
-        .ingredients-list ul {
-            list-style: none;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5px;
-        }
-
-        .ingredients-list li {
-            font-size: 14px;
-        }
-
-        /* 周计划选择器 */
-        .plan-selector {
-            background: #f8f8f8;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-        }
-
-        .plan-selector h4 {
-            margin-bottom: 10px;
-            color: #d81b60;
-        }
-
-        .day-selector, .meal-selector {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-
-        .day-selector button, .meal-selector button {
-            padding: 6px 12px;
-            border: 1px solid #f8bbd0;
-            border-radius: 15px;
-            background: white;
-            color: #d81b60;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .day-selector button.active, .meal-selector button.active {
-            background: #d81b60;
-            color: white;
-        }
-
-        .modal-btns {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .collect-btn, .add-order-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .collect-btn {
-            background: #fce4ec;
-            color: #d81b60;
-        }
-
-        .add-order-btn {
-            background: #d81b60;
-            color: white;
-        }
-
-        /* 点单页面 */
-        .order-page {
-            display: none;
-            padding: 15px;
-        }
-
-        .day-plan {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-
-        .day-title {
+        .cart-total {
             font-size: 18px;
             font-weight: bold;
-            color: #d81b60;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #f8bbd0;
+            color: #ff5c8a;
         }
 
-        .meal-section {
-            margin-bottom: 12px;
-        }
-
-        .meal-title {
-            font-size: 15px;
-            font-weight: bold;
-            margin: 8px 0;
-            color: #666;
-        }
-
-        .order-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #f0f0f0;
-            margin-left: 10px;
-        }
-
-        .order-item:last-child {
-            border-bottom: none;
-        }
-
-        .order-item-name {
-            font-size: 14px;
-        }
-
-        .del-order {
-            color: #ff4081;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .shopping-list {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 20px;
-        }
-
-        .shopping-list h3 {
-            color: #d81b60;
-            margin-bottom: 15px;
-        }
-
-        .shopping-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px dashed #f0f0f0;
-        }
-
-        .shopping-item:last-child {
-            border-bottom: none;
-        }
-
-        .empty-tip {
-            text-align: center;
-            padding: 50px;
-            color: #999;
-        }
-
-        /* 我的页面 */
-        .mine-page {
-            display: none;
-            padding: 15px;
-        }
-
-        .user-info {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .user-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #f8bbd0;
-            margin: 0 auto 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: #d81b60;
-        }
-
-        .menu-list {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .menu-item {
-            padding: 15px;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .menu-item:last-child {
-            border-bottom: none;
-        }
-
-        /* 图片加载失败处理 */
-        img[src=""], img:not([src]) {
-            opacity: 0;
-        }
-
-        .clear-all-btn {
-            background: #ff4081;
+        .submit-order {
+            background: #ff5c8a;
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 15px;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: bold;
             cursor: pointer;
-            margin-bottom: 15px;
-            float: right;
+        }
+
+        .order-box {
+            margin-top: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .order-box input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .send-order {
+            width: 100%;
+            background: #ff5c8a;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .success {
+            text-align: center;
+            color: #4caf50;
+            font-weight: bold;
+            margin-top: 20px;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <!-- 顶部导航 -->
-    <div class="header">
-        <h1>孕期营养食谱大全</h1>
-    </div>
 
-    <!-- 食谱页面 -->
-    <div class="recipe-page" id="recipePage">
-        <!-- 分类筛选 -->
-        <div class="category">
-            <button class="active" data-type="all">全部</button>
-            <button data-type="early">孕早期</button>
-            <button data-type="middle">孕中期</button>
-            <button data-type="late">孕晚期</button>
-            <button data-type="breakfast">早餐</button>
-            <button data-type="lunch">午餐</button>
-            <button data-type="dinner">晚餐</button>
-            <button data-type="snack">加餐</button>
-        </div>
+<header>🍼 孕妈安心餐 - 健康点餐</header>
 
-        <!-- 食谱列表 -->
-        <div class="recipe-list" id="recipeList">
-            <!-- 数据由JS自动渲染 -->
-        </div>
-    </div>
-
-    <!-- 点单页面 -->
-    <div class="order-page" id="orderPage">
-        <button class="clear-all-btn" id="clearAllBtn">清空本周计划</button>
-        <div id="weeklyPlan">
-            <!-- 周计划数据由JS自动渲染 -->
-        </div>
-        <div class="shopping-list" id="shoppingList">
-            <h3>📋 本周采购清单（自动汇总）</h3>
-            <!-- 汇总的食材 -->
-        </div>
-    </div>
-
-    <!-- 我的页面 -->
-    <div class="mine-page" id="minePage">
-        <div class="user-info">
-            <div class="user-avatar">👩</div>
-            <h3>孕妈用户</h3>
-            <p>科学饮食，健康孕期</p>
-        </div>
-        <div class="menu-list">
-            <div class="menu-item">
-                <span>我的收藏</span>
-                <span>></span>
+<div class="container">
+    <div class="section-title">今日推荐 · 清淡营养</div>
+    <div class="food-list">
+        <div class="food-item">
+            <img src="https://picsum.photos/id/292/300/200" class="food-img">
+            <div class="food-info">
+                <div class="food-name">清炖鸡汤</div>
+                <div class="food-desc">无盐 · 补气血</div>
+                <div class="food-price">¥28</div>
+                <button class="add-cart" data-name="清炖鸡汤" data-price="28">加入点餐</button>
             </div>
-            <div class="menu-item">
-                <span>历史记录</span>
-                <span>></span>
+        </div>
+        <div class="food-item">
+            <img src="https://picsum.photos/id/431/300/200" class="food-img">
+            <div class="food-info">
+                <div class="food-name">清蒸鲈鱼</div>
+                <div class="food-desc">高蛋白 · 易消化</div>
+                <div class="food-price">¥32</div>
+                <button class="add-cart" data-name="清蒸鲈鱼" data-price="32">加入点餐</button>
             </div>
-            <div class="menu-item">
-                <span>关于我们</span>
-                <span>></span>
+        </div>
+        <div class="food-item">
+            <img src="https://picsum.photos/id/225/300/200" class="food-img">
+            <div class="food-info">
+                <div class="food-name">蔬菜小米粥</div>
+                <div class="food-desc">养胃 · 清淡</div>
+                <div class="food-price">¥12</div>
+                <button class="add-cart" data-name="蔬菜小米粥" data-price="12">加入点餐</button>
+            </div>
+        </div>
+        <div class="food-item">
+            <img src="https://picsum.photos/id/488/300/200" class="food-img">
+            <div class="food-info">
+                <div class="food-name">山药排骨汤</div>
+                <div class="food-desc">补钙 · 补营养</div>
+                <div class="food-price">¥26</div>
+                <button class="add-cart" data-name="山药排骨汤" data-price="26">加入点餐</button>
             </div>
         </div>
     </div>
 
-    <!-- 详情弹窗 -->
-    <div class="modal" id="recipeModal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <img class="modal-image" id="modalImage" src="" alt="食谱图片" loading="lazy">
-            <h2 class="modal-title" id="modalTitle"></h2>
-            <p><strong>适合孕期：</strong><span id="modalType"></span> | <strong>推荐餐次：</strong><span id="modalMeal"></span></p>
-            
-            <div class="ingredients-list">
-                <h4>🥬 所需食材</h4>
-                <ul id="modalIngredients"></ul>
-            </div>
-
-            <p class="modal-desc" id="modalDesc"></p>
-
-            <!-- 周计划选择器 -->
-            <div class="plan-selector">
-                <h4>📅 添加到周计划</h4>
-                <div class="day-selector" id="daySelector">
-                    <button data-day="1" class="active">周一</button>
-                    <button data-day="2">周二</button>
-                    <button data-day="3">周三</button>
-                    <button data-day="4">周四</button>
-                    <button data-day="5">周五</button>
-                </div>
-                <div class="meal-selector" id="mealSelector">
-                    <button data-meal="breakfast" class="active">早餐</button>
-                    <button data-meal="lunch">午餐</button>
-                    <button data-meal="dinner">晚餐</button>
-                    <button data-meal="snack">加餐</button>
-                </div>
-            </div>
-
-            <div class="modal-btns">
-                <button class="collect-btn" id="collectBtn">收藏食谱</button>
-                <button class="add-order-btn" id="addOrderBtn">添加到计划</button>
-            </div>
-        </div>
+    <div class="section-title">订单信息</div>
+    <div class="order-box" id="orderBox">
+        <input type="text" id="username" placeholder="孕妈姓名">
+        <input type="text" id="phone" placeholder="联系电话">
+        <input type="text" id="address" placeholder="送餐地址">
+        <button class="send-order" id="sendOrder">提交订单</button>
     </div>
 
-    <!-- 底部导航 -->
-    <div class="tab-bar">
-        <div class="tab-item active" data-page="recipe">
-            <i>🍳</i>
-            <span>食谱</span>
-        </div>
-        <div class="tab-item" data-page="order">
-            <i>📅</i>
-            <span>周计划</span>
-            <span class="badge" id="orderBadge" style="display: none;">0</span>
-        </div>
-        <div class="tab-item" data-page="mine">
-            <i>👤</i>
-            <span>我的</span>
-        </div>
-    </div>
+    <div class="success" id="success">✅ 订单提交成功！我们将尽快为您送餐</div>
+</div>
 
-    <script>
-        // 完整食谱数据库（35道精选孕期食谱）
-        const recipeData = [
-            // 孕早期
-            {
-                id: 1,
-                title: "红枣小米粥",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000000~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=abc123",
-                type: "early",
-                typeName: "孕早期",
-                meal: "breakfast",
-                mealName: "早餐",
-                tag: "缓解孕吐",
-                ingredients: [
-                    {name: "小米", amount: "50g"},
-                    {name: "红枣", amount: "3颗"},
-                    {name: "冰糖", amount: "少许"}
-                ],
-                desc: "健脾养胃、缓解孕吐，食材简单，营养温和，非常适合孕早期食欲不振的孕妈。做法：小米洗净熬煮30分钟，加入红枣再煮10分钟即可。"
-            },
-            {
-                id: 2,
-                title: "生姜乌梅饮",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000001~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=def456",
-                type: "early",
-                typeName: "孕早期",
-                meal: "snack",
-                mealName: "加餐",
-                tag: "止吐神器",
-                ingredients: [
-                    {name: "生姜", amount: "3片"},
-                    {name: "红枣", amount: "3颗"},
-                    {name: "乌梅", amount: "10粒"}
-                ],
-                desc: "有效缓解孕早期孕吐反应，酸甜开胃，改善恶心症状。做法：所有食材加水煮15分钟，代茶饮即可。"
-            },
-            {
-                id: 3,
-                title: "山药小米粥",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000002~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=ghi789",
-                type: "early",
-                typeName: "孕早期",
-                meal: "dinner",
-                mealName: "晚餐",
-                tag: "清淡易消化",
-                ingredients: [
-                    {name: "小米", amount: "40g"},
-                    {name: "山药", amount: "100g"},
-                    {name: "大米", amount: "30g"}
-                ],
-                desc: "健脾养胃，易消化，适合孕早期肠胃不适的孕妈。做法：食材洗净切块，熬煮至软烂即可。"
-            },
-            {
-                id: 4,
-                title: "蔬菜沙拉",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000003~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=jkl012",
-                type: "early",
-                typeName: "孕早期",
-                meal: "lunch",
-                mealName: "午餐",
-                tag: "补充维生素",
-                ingredients: [
-                    {name: "生菜", amount: "100g"},
-                    {name: "小番茄", amount: "50g"},
-                    {name: "黄瓜", amount: "50g"},
-                    {name: "沙拉酱", amount: "少许"}
-                ],
-                desc: "清爽开胃，补充维生素，缓解孕吐，适合孕早期食欲不振。做法：食材洗净切块，拌匀即可。"
-            },
-            {
-                id: 21,
-                title: "柠檬蜂蜜水",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000020~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=abc123",
-                type: "early",
-                typeName: "孕早期",
-                meal: "snack",
-                mealName: "加餐",
-                tag: "缓解孕吐",
-                ingredients: [
-                    {name: "柠檬", amount: "2片"},
-                    {name: "蜂蜜", amount: "1勺"}
-                ],
-                desc: "清新爽口，有效缓解孕早期恶心呕吐，补充维生素C。做法：柠檬片用温水冲泡，加入蜂蜜调味即可。"
-            },
-            {
-                id: 22,
-                title: "番茄鸡蛋面",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000021~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=def456",
-                type: "early",
-                typeName: "孕早期",
-                meal: "lunch",
-                mealName: "午餐",
-                tag: "易消化",
-                ingredients: [
-                    {name: "面条", amount: "100g"},
-                    {name: "番茄", amount: "1个"},
-                    {name: "鸡蛋", amount: "1个"},
-                    {name: "葱花", amount: "少许"}
-                ],
-                desc: "酸甜可口，易消化吸收，适合孕早期没胃口的时候吃。做法：番茄炒出汤汁，加水煮沸下面条，淋入蛋液即可。"
-            },
-            {
-                id: 23,
-                title: "蒸南瓜",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000022~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=ghi789",
-                type: "early",
-                typeName: "孕早期",
-                meal: "breakfast",
-                mealName: "早餐",
-                tag: "养胃",
-                ingredients: [
-                    {name: "南瓜", amount: "200g"}
-                ],
-                desc: "香甜软糯，健脾养胃，无需任何调料，营养又健康。做法：南瓜去皮切块，上锅蒸15分钟即可。"
-            },
-            // 孕中期
-            {
-                id: 5,
-                title: "菠菜猪肝汤",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000004~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=mno345",
-                type: "middle",
-                typeName: "孕中期",
-                meal: "lunch",
-                mealName: "午餐",
-                tag: "补铁补血",
-                ingredients: [
-                    {name: "猪肝", amount: "100g"},
-                    {name: "菠菜", amount: "150g"},
-                    {name: "姜片", amount: "2片"},
-                    {name: "盐", amount: "少许"}
-                ],
-                desc: "补铁补血、预防孕期贫血，适合孕中期胎儿快速发育需求。做法：猪肝焯水去腥，加水煮沸后放入菠菜，煮5分钟调味即可。"
-            },
-            {
-                id: 6,
-                title: "鲫鱼豆腐汤",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000005~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=pqr678",
-                type: "middle",
-                typeName: "孕中期",
-                meal: "dinner",
-                mealName: "晚餐",
-                tag: "补钙下奶",
-                ingredients: [
-                    {name: "鲫鱼", amount: "1条"},
-                    {name: "豆腐", amount: "200g"},
-                    {name: "葱姜", amount: "少许"},
-                    {name: "盐", amount: "少许"}
-                ],
-                desc: "优质蛋白丰富，补钙又下奶，促进胎儿骨骼发育，汤鲜味美。做法：鲫鱼煎至金黄，加水煮沸，加入豆腐煮15分钟调味。"
-            },
-            {
-                id: 7,
-                title: "虾仁蒸蛋",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000006~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=stu901",
-                type: "middle",
-                typeName: "孕中期",
-                meal: "breakfast",
-                mealName: "早餐",
-                tag: "高蛋白",
-                ingredients: [
-                    {name: "鸡蛋", amount: "2个"},
-                    {name: "虾仁", amount: "50g"},
-                    {name: "葱花", amount: "少许"},
-                    {name: "生抽", amount: "少许"}
-                ],
-                desc: "嫩滑易消化，补充优质蛋白，促进胎儿发育，适合孕中期营养补充。做法：鸡蛋打散加水，蒸8分钟，加入虾仁再蒸3分钟。"
-            },
-            {
-                id: 8,
-                title: "西兰花炒虾仁",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000007~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=vwx234",
-                type: "middle",
-                typeName: "孕中期",
-                meal: "lunch",
-                mealName: "午餐",
-                tag: "补叶酸",
-                ingredients: [
-                    {name: "西兰花", amount: "200g"},
-                    {name: "虾仁", amount: "100g"},
-                    {name: "蒜末", amount: "少许"},
-                    {name: "盐", amount: "少许"}
-                ],
-                desc: "西兰花富含叶酸，虾仁补充蛋白，营养均衡，适合孕中期胎儿神经管发育。做法：西兰花焯水，和虾仁一起炒熟即可。"
-            },
-            {
-                id: 9,
-                title: "核桃牛奶",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000008~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=yzx567",
-                type: "middle",
-                typeName: "孕中期",
-                meal: "snack",
-                mealName: "加餐",
-                tag: "补脑DHA",
-                ingredients: [
-                    {name: "核桃", amount: "3个"},
-                    {name: "牛奶", amount: "200ml"}
-                ],
-                desc: "补充DHA，促进胎儿大脑发育，口感香浓，加餐首选。做法：核桃打碎，加入温牛奶拌匀即可。"
-            },
-            {
-                id: 24,
-                title: "番茄炖牛腩",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000023~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=jkl012",
-                type: "middle",
-                typeName: "孕中期",
-                meal: "dinner",
-                mealName: "晚餐",
-                tag: "补铁",
-                ingredients: [
-                    {name: "牛腩", amount: "200g"},
-                    {name: "番茄", amount: "2个"},
-                    {name: "葱姜", amount: "少许"},
-                    {name: "盐", amount: "少许"}
-                ],
-                desc: "富含血红素铁，有效预防孕期贫血，口感软烂，营养丰富。做法：牛腩焯水后炖1小时，加入番茄再炖30分钟。"
-            },
-            {
-                id: 25,
-                title: "香菇滑鸡",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000024~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=mno345",
-                type: "middle",
-                typeName: "孕中期",
-                meal: "lunch",
-                mealName: "午餐",
-                tag: "高蛋白",
-                ingredients: [
-                    {name: "鸡腿肉", amount: "200g"},
-                    {name: "香菇", amount: "5朵"},
-                    {name: "姜片", amount: "2片"},
-                    {name: "生抽", amount: "少许"}
-                ],
-                desc: "鸡肉嫩滑，香菇鲜美，补充优质蛋白，增强免疫力。做法：鸡肉腌制后和香菇一起蒸15分钟即可。"
-            },
-            {
-                id: 26,
-                title: "玉米排骨汤",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000025~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=pqr678",
-                type: "middle",
-                typeName: "孕中期",
-                meal: "dinner",
-                mealName: "晚餐",
-                tag: "补钙",
-                ingredients: [
-                    {name: "排骨", amount: "200g"},
-                    {name: "玉米", amount: "1根"},
-                    {name: "胡萝卜", amount: "1根"},
-                    {name: "盐", amount: "少许"}
-                ],
-                desc: "清甜可口，补钙又补锌，促进胎儿骨骼发育。做法：排骨焯水后煮30分钟，加入玉米胡萝卜再煮20分钟。"
-            },
-            // 孕晚期
-            {
-                id: 10,
-                title: "清蒸鲈鱼",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000009~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=abc890",
-                type: "late",
-                typeName: "孕晚期",
-                meal: "lunch",
-                mealName: "午餐",
-                tag: "低脂肪高蛋白",
-                ingredients: [
-                    {name: "鲈鱼", amount: "1条"},
-                    {name: "葱姜", amount: "少许"},
-                    {name: "蒸鱼豉油", amount: "少许"}
-                ],
-                desc: "优质蛋白丰富、脂肪低，促进胎儿大脑发育，清淡不油腻，适合孕晚期控制体重。做法：鱼处理干净蒸10分钟，淋热油和蒸鱼豉油即可。"
-            },
-            {
-                id: 11,
-                title: "南瓜山药粥",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000010~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=def123",
-                type: "late",
-                typeName: "孕晚期",
-                meal: "breakfast",
-                mealName: "早餐",
-                tag: "润肠通便",
-                ingredients: [
-                    {name: "南瓜", amount: "100g"},
-                    {name: "山药", amount: "100g"},
-                    {name: "大米", amount: "50g"}
-                ],
-                desc: "健脾养胃、润肠通便，缓解孕晚期便秘，口感香甜，孕妈都爱吃。做法：所有食材切块熬煮至软烂即可。"
-            },
-            {
-                id: 12,
-                title: "紫菜虾皮汤",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000011~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=ghi456",
-                type: "late",
-                typeName: "孕晚期",
-                meal: "dinner",
-                mealName: "晚餐",
-                tag: "补钙补碘",
-                ingredients: [
-                    {name: "紫菜", amount: "10g"},
-                    {name: "虾皮", amount: "20g"},
-                    {name: "鸡蛋", amount: "1个"},
-                    {name: "盐", amount: "少许"}
-                ],
-                desc: "补钙补碘，清淡易消化，适合孕晚期水肿的孕妈，低钠健康。做法：水煮沸，加入紫菜虾皮，淋入蛋液，调味即可。"
-            },
-            {
-                id: 13,
-                title: "冬瓜排骨汤",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000012~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=jkl789",
-                type: "late",
-                typeName: "孕晚期",
-                meal: "dinner",
-                mealName: "晚餐",
-                tag: "消水肿",
-                ingredients: [
-                    {name: "排骨", amount: "200g"},
-                    {name: "冬瓜", amount: "200g"},
-                    {name: "姜片", amount: "2片"},
-                    {name: "盐", amount: "少许"}
-                ],
-                desc: "利水消肿，缓解孕晚期下肢水肿，清淡不油腻，补充蛋白。做法：排骨焯水，煮30分钟，加入冬瓜煮15分钟调味。"
-            },
-            {
-                id: 14,
-                title: "杂粮饭",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000013~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=mno012",
-                type: "late",
-                typeName: "孕晚期",
-                meal: "lunch",
-                mealName: "午餐",
-                tag: "控血糖",
-                ingredients: [
-                    {name: "糙米", amount: "30g"},
-                    {name: "小米", amount: "20g"},
-                    {name: "黑米", amount: "20g"},
-                    {name: "藜麦", amount: "10g"}
-                ],
-                desc: "低升糖，控制孕晚期血糖，预防妊娠糖尿病，膳食纤维丰富。做法：所有杂粮洗净，蒸熟即可。"
-            },
-            {
-                id: 15,
-                title: "猕猴桃酸奶",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000014~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=pqr345",
-                type: "late",
-                typeName: "孕晚期",
-                meal: "snack",
-                mealName: "加餐",
-                tag: "补充维C",
-                ingredients: [
-                    {name: "猕猴桃", amount: "1个"},
-                    {name: "酸奶", amount: "100g"}
-                ],
-                desc: "补充维生素C，促进铁吸收，酸甜开胃，缓解孕晚期便秘。做法：猕猴桃切块，加入酸奶拌匀即可。"
-            },
-            {
-                id: 27,
-                title: "清炒时蔬",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000026~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=stu901",
-                type: "late",
-                typeName: "孕晚期",
-                meal: "lunch",
-                mealName: "午餐",
-                tag: "高纤维",
-                ingredients: [
-                    {name: "上海青", amount: "200g"},
-                    {name: "蒜末", amount: "少许"},
-                    {name: "盐", amount: "少许"}
-                ],
-                desc: "清淡爽口，富含膳食纤维，缓解孕晚期便秘，控制体重。做法：蒜末爆香，加入上海青炒熟即可。"
-            },
-            {
-                id: 28,
-                title: "银耳莲子羹",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000027~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=vwx234",
-                type: "late",
-                typeName: "孕晚期",
-                meal: "snack",
-                mealName: "加餐",
-                tag: "润肺养颜",
-                ingredients: [
-                    {name: "银耳", amount: "1朵"},
-                    {name: "莲子", amount: "10粒"},
-                    {name: "冰糖", amount: "少许"}
-                ],
-                desc: "滋阴润肺，养颜美容，口感软糯香甜，适合孕晚期加餐。做法：银耳泡发后和莲子一起炖1小时，加入冰糖调味。"
-            },
-            // 通用
-            {
-                id: 16,
-                title: "全麦面包+牛奶",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000015~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=stu678",
-                type: "all",
-                typeName: "全孕期",
-                meal: "breakfast",
-                mealName: "早餐",
-                tag: "快手早餐",
-                ingredients: [
-                    {name: "全麦面包", amount: "2片"},
-                    {name: "牛奶", amount: "200ml"},
-                    {name: "鸡蛋", amount: "1个"}
-                ],
-                desc: "快手营养早餐，补充碳水和蛋白，适合忙碌的孕妈，全孕期都适用。做法：面包加热，牛奶加热，鸡蛋水煮即可。"
-            },
-            {
-                id: 17,
-                title: "芹菜炒香干",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000016~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=vwx901",
-                type: "all",
-                typeName: "全孕期",
-                meal: "lunch",
-                mealName: "午餐",
-                tag: "降血压",
-                ingredients: [
-                    {name: "芹菜", amount: "200g"},
-                    {name: "香干", amount: "50g"},
-                    {name: "蒜末", amount: "少许"},
-                    {name: "盐", amount: "少许"}
-                ],
-                desc: "降血压，预防孕期高血压，膳食纤维丰富，缓解便秘。做法：食材洗净，炒熟调味即可。"
-            },
-            {
-                id: 18,
-                title: "海带豆腐汤",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000017~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=yzx234",
-                type: "all",
-                typeName: "全孕期",
-                meal: "dinner",
-                mealName: "晚餐",
-                tag: "补碘补钙",
-                ingredients: [
-                    {name: "海带", amount: "50g"},
-                    {name: "豆腐", amount: "100g"},
-                    {name: "盐", amount: "少许"}
-                ],
-                desc: "补碘补钙，促进胎儿甲状腺发育，清淡健康，全孕期适用。做法：水煮沸，加入海带豆腐，煮10分钟调味。"
-            },
-            {
-                id: 19,
-                title: "苹果",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000018~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=abc567",
-                type: "all",
-                typeName: "全孕期",
-                meal: "snack",
-                mealName: "加餐",
-                tag: "每日一苹果",
-                ingredients: [
-                    {name: "苹果", amount: "1个"}
-                ],
-                desc: "每天一个苹果，医生远离我，补充维生素，缓解孕吐，全孕期都可以吃。"
-            },
-            {
-                id: 20,
-                title: "虾仁馄饨",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000019~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=def890",
-                type: "late",
-                typeName: "孕晚期",
-                meal: "dinner",
-                mealName: "晚餐",
-                tag: "易消化",
-                ingredients: [
-                    {name: "馄饨皮", amount: "20张"},
-                    {name: "虾仁", amount: "100g"},
-                    {name: "猪肉馅", amount: "50g"},
-                    {name: "葱花", amount: "少许"}
-                ],
-                desc: "易消化，适合孕晚期肠胃受压的孕妈，补充蛋白，口感鲜美。做法：包好馄饨，煮熟即可。"
-            },
-            {
-                id: 29,
-                title: "水煮蛋",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000028~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=yzx567",
-                type: "all",
-                typeName: "全孕期",
-                meal: "breakfast",
-                mealName: "早餐",
-                tag: "高蛋白",
-                ingredients: [
-                    {name: "鸡蛋", amount: "1个"}
-                ],
-                desc: "最简单的营养来源，富含优质蛋白和卵磷脂，全孕期必备。做法：鸡蛋冷水下锅，煮8分钟即可。"
-            },
-            {
-                id: 30,
-                title: "豆浆",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000029~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=abc123",
-                type: "all",
-                typeName: "全孕期",
-                meal: "breakfast",
-                mealName: "早餐",
-                tag: "植物蛋白",
-                ingredients: [
-                    {name: "黄豆", amount: "50g"},
-                    {name: "白糖", amount: "少许"}
-                ],
-                desc: "富含植物蛋白和大豆异黄酮，营养丰富，适合早餐饮用。做法：黄豆泡发后打成豆浆，煮沸即可。"
-            },
-            {
-                id: 31,
-                title: "全麦三明治",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000030~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=def456",
-                type: "all",
-                typeName: "全孕期",
-                meal: "breakfast",
-                mealName: "早餐",
-                tag: "快手早餐",
-                ingredients: [
-                    {name: "全麦面包", amount: "2片"},
-                    {name: "鸡蛋", amount: "1个"},
-                    {name: "生菜", amount: "2片"},
-                    {name: "番茄", amount: "2片"}
-                ],
-                desc: "营养均衡的快手早餐，碳水、蛋白、维生素都有了。做法：面包片夹入煎蛋、生菜和番茄片即可。"
-            },
-            {
-                id: 32,
-                title: "香蕉奶昔",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000031~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=ghi789",
-                type: "all",
-                typeName: "全孕期",
-                meal: "snack",
-                mealName: "加餐",
-                tag: "润肠通便",
-                ingredients: [
-                    {name: "香蕉", amount: "1根"},
-                    {name: "牛奶", amount: "200ml"}
-                ],
-                desc: "香甜顺滑，润肠通便，缓解孕期便秘，快速补充能量。做法：香蕉和牛奶一起放入搅拌机打成奶昔即可。"
-            },
-            {
-                id: 33,
-                title: "蒸鸡蛋羹",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000032~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=jkl012",
-                type: "all",
-                typeName: "全孕期",
-                meal: "breakfast",
-                mealName: "早餐",
-                tag: "易消化",
-                ingredients: [
-                    {name: "鸡蛋", amount: "2个"},
-                    {name: "温水", amount: "150ml"},
-                    {name: "生抽", amount: "少许"},
-                    {name: "香油", amount: "少许"}
-                ],
-                desc: "嫩滑如布丁，易消化吸收，适合全孕期食用。做法：鸡蛋打散加温水，过筛后蒸10分钟，淋入生抽和香油。"
-            },
-            {
-                id: 34,
-                title: "凉拌黄瓜",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000033~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=mno345",
-                type: "all",
-                typeName: "全孕期",
-                meal: "lunch",
-                mealName: "午餐",
-                tag: "清爽开胃",
-                ingredients: [
-                    {name: "黄瓜", amount: "2根"},
-                    {name: "蒜末", amount: "少许"},
-                    {name: "生抽", amount: "少许"},
-                    {name: "醋", amount: "少许"}
-                ],
-                desc: "清爽开胃，解腻消暑，适合夏天食用。做法：黄瓜拍碎，加入蒜末、生抽和醋拌匀即可。"
-            },
-            {
-                id: 35,
-                title: "小米粥",
-                image: "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/agent/62e01009050940008000000000000034~tplv-a9rns2rl98-image.image?rk3s=1e24258c&x-expires=2070086400&x-signature=pqr678",
-                type: "all",
-                typeName: "全孕期",
-                meal: "dinner",
-                mealName: "晚餐",
-                tag: "养胃",
-                ingredients: [
-                    {name: "小米", amount: "50g"}
-                ],
-                desc: "最养胃的主食，清淡易消化，适合肠胃不适的时候吃。做法：小米洗净，加水熬煮30分钟至软烂即可。"
-            }
-        ];
+<div class="cart">
+    <div class="cart-total" id="total">合计：¥0</div>
+    <button class="submit-order" id="submitBtn">去结算</button>
+</div>
 
-        // 周计划数据结构
-        const days = ["周一", "周二", "周三", "周四", "周五"];
-        const meals = ["breakfast", "lunch", "dinner", "snack"];
-        const mealNames = {"breakfast": "早餐", "lunch": "午餐", "dinner": "晚餐", "snack": "加餐"};
+<script>
+    let cart = []
+    let total = 0
+    const totalDom = document.getElementById('total')
+    const orderBox = document.getElementById('orderBox')
+    const success = document.getElementById('success')
 
-        // 获取DOM元素
-        const recipeList = document.getElementById('recipeList');
-        const weeklyPlan = document.getElementById('weeklyPlan');
-        const shoppingList = document.getElementById('shoppingList');
-        const modal = document.getElementById('recipeModal');
-        const closeBtn = document.querySelector('.close-btn');
-        const collectBtn = document.getElementById('collectBtn');
-        const addOrderBtn = document.getElementById('addOrderBtn');
-        const categoryBtns = document.querySelectorAll('.category button');
-        const tabItems = document.querySelectorAll('.tab-item');
-        const orderBadge = document.getElementById('orderBadge');
-        const recipePage = document.getElementById('recipePage');
-        const orderPage = document.getElementById('orderPage');
-        const minePage = document.getElementById('minePage');
-        const daySelector = document.getElementById('daySelector');
-        const mealSelector = document.getElementById('mealSelector');
-        const clearAllBtn = document.getElementById('clearAllBtn');
-        
-        let currentRecipe = null;
-        let selectedDay = 1;
-        let selectedMeal = "breakfast";
-        let collectList = JSON.parse(localStorage.getItem('pregnancyCollect')) || [];
-        let weeklyPlanData = JSON.parse(localStorage.getItem('pregnancyWeeklyPlan')) || {
-            1: {breakfast: [], lunch: [], dinner: [], snack: []},
-            2: {breakfast: [], lunch: [], dinner: [], snack: []},
-            3: {breakfast: [], lunch: [], dinner: [], snack: []},
-            4: {breakfast: [], lunch: [], dinner: [], snack: []},
-            5: {breakfast: [], lunch: [], dinner: [], snack: []}
-        };
+    document.querySelectorAll('.add-cart').forEach(btn => {
+        btn.onclick = () => {
+            const name = btn.dataset.name
+            const price = Number(btn.dataset.price)
+            cart.push({ name, price })
+            total += price
+            totalDom.innerText = `合计：¥${total}`
+        }
+    })
 
-        // 初始化
-        function init() {
-            renderRecipes();
-            updateOrderBadge();
-            renderWeeklyPlan();
-            initSelectors();
+    document.getElementById('submitBtn').onclick = () => {
+        if (total === 0) {
+            alert('请先选择餐品')
+            return
+        }
+        orderBox.style.display = 'block'
+    }
+
+    document.getElementById('sendOrder').onclick = () => {
+        const name = document.getElementById('username').value
+        const phone = document.getElementById('phone').value
+        const address = document.getElementById('address').value
+
+        if (!name || !phone || !address) {
+            alert('请填写完整信息')
+            return
         }
 
-        // 初始化选择器
-        function initSelectors() {
-            // 日期选择
-            daySelector.querySelectorAll('button').forEach(btn => {
-                btn.onclick = () => {
-                    daySelector.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    selectedDay = parseInt(btn.dataset.day);
-                };
-            });
+        success.style.display = 'block'
+        orderBox.style.display = 'none'
+        cart = []
+        total = 0
+        totalDom.innerText = `合计：¥0`
+    }
+</script>
 
-            // 餐次选择
-            mealSelector.querySelectorAll('button').forEach(btn => {
-                btn.onclick = () => {
-                    mealSelector.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    selectedMeal = btn.dataset.meal;
-                };
-            });
-        }
-
-        // 渲染食谱列表
-        function renderRecipes(type = 'all') {
-            recipeList.innerHTML = '';
-            const filterData = type === 'all' 
-                ? recipeData 
-                : recipeData.filter(item => item.type === type || item.meal === type);
-            
-            filterData.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'recipe-card';
-                card.innerHTML = `
-                    <img src="${item.image}" alt="${item.title}" class="recipe-image" loading="lazy" onerror="this.style.display='none'; this.parentElement.querySelector('.img-placeholder').style.display='flex';">
-                    <div class="img-placeholder" style="display: none; width: 100%; height: 180px; background: #fce4ec; align-items: center; justify-content: center; color: #d81b60; font-size: 40px;">🍽️</div>
-                    <div class="recipe-info">
-                        <div class="recipe-title">${item.title}</div>
-                        <span class="recipe-tag">${item.typeName}</span>
-                        <span class="recipe-tag">${item.tag}</span>
-                    </div>
-                `;
-                card.onclick = () => openModal(item);
-                recipeList.appendChild(card);
-            });
-        }
-
-        // 打开详情弹窗
-        function openModal(recipe) {
-            currentRecipe = recipe;
-            const modalImage = document.getElementById('modalImage');
-            modalImage.src = recipe.image;
-            modalImage.onerror = function() {
-                this.style.display = 'none';
-                this.parentElement.querySelector('.modal-placeholder').style.display = 'flex';
-            };
-            
-            document.getElementById('modalTitle').innerText = recipe.title;
-            document.getElementById('modalType').innerText = recipe.typeName;
-            document.getElementById('modalMeal').innerText = recipe.mealName;
-            document.getElementById('modalDesc').innerText = recipe.desc;
-            
-            // 渲染食材
-            const ingredientsUl = document.getElementById('modalIngredients');
-            ingredientsUl.innerHTML = '';
-            recipe.ingredients.forEach(ing => {
-                const li = document.createElement('li');
-                li.innerText = `${ing.name} ${ing.amount}`;
-                ingredientsUl.appendChild(li);
-            });
-
-            collectBtn.innerText = collectList.includes(recipe.id) ? '已收藏' : '收藏食谱';
-            modal.style.display = 'flex';
-        }
-
-        // 关闭弹窗
-        closeBtn.onclick = () => modal.style.display = 'none';
-        window.onclick = (e) => e.target === modal && (modal.style.display = 'none');
-
-        // 收藏功能
-        collectBtn.onclick = () => {
-            const id = currentRecipe.id;
-            if(collectList.includes(id)) {
-                collectList = collectList.filter(item => item !== id);
-                collectBtn.innerText = '收藏食谱';
-                alert('已取消收藏');
-            } else {
-                collectList.push(id);
-                collectBtn.innerText = '已收藏';
-                alert('收藏成功');
-            }
-            localStorage.setItem('pregnancyCollect', JSON.stringify(collectList));
-        };
-
-        // 添加到周计划
-        addOrderBtn.onclick = () => {
-            // 检查是否已经添加过
-            const alreadyAdded = weeklyPlanData[selectedDay][selectedMeal].some(item => item.id === currentRecipe.id);
-            if(alreadyAdded) {
-                alert(`这道菜已经添加到${days[selectedDay-1]}${mealNames[selectedMeal]}啦~`);
-                return;
-            }
-
-            // 添加到计划
-            weeklyPlanData[selectedDay][selectedMeal].push(currentRecipe);
-            localStorage.setItem('pregnancyWeeklyPlan', JSON.stringify(weeklyPlanData));
-            
-            updateOrderBadge();
-            renderWeeklyPlan();
-            alert(`已成功添加到${days[selectedDay-1]}${mealNames[selectedMeal]}！`);
-            modal.style.display = 'none';
-        };
-
-        // 更新点单角标
-        function updateOrderBadge() {
-            let total = 0;
-            for(let day in weeklyPlanData) {
-                for(let meal in weeklyPlanData[day]) {
-                    total += weeklyPlanData[day][meal].length;
-                }
-            }
-            
-            if(total > 0) {
-                orderBadge.style.display = 'block';
-                orderBadge.innerText = total;
-            } else {
-                orderBadge.style.display = 'none';
-            }
-        }
-
-        // 渲染周计划页面
-        function renderWeeklyPlan() {
-            weeklyPlan.innerHTML = '';
-            let hasContent = false;
-
-            // 遍历每一天
-            for(let day = 1; day <= 5; day++) {
-                const dayData = weeklyPlanData[day];
-                const dayHasContent = meals.some(meal => dayData[meal].length > 0);
-                
-                if(!dayHasContent) continue;
-                hasContent = true;
-
-                const dayDiv = document.createElement('div');
-                dayDiv.className = 'day-plan';
-                dayDiv.innerHTML = `<div class="day-title">📅 ${days[day-1]}</div>`;
-
-                // 遍历每一餐
-                meals.forEach(meal => {
-                    const mealData = dayData[meal];
-                    if(mealData.length === 0) return;
-
-                    const mealDiv = document.createElement('div');
-                    mealDiv.className = 'meal-section';
-                    mealDiv.innerHTML = `<div class="meal-title">🍽️ ${mealNames[meal]}</div>`;
-
-                    // 渲染该餐的食谱
-                    mealData.forEach(item => {
-                        const orderItem = document.createElement('div');
-                        orderItem.className = 'order-item';
-                        orderItem.innerHTML = `
-                            <span class="order-item-name">${item.title}</span>
-                            <span class="del-order" data-day="${day}" data-meal="${meal}" data-id="${item.id}">删除</span>
-                        `;
-                        mealDiv.appendChild(orderItem);
-                    });
-
-                    dayDiv.appendChild(mealDiv);
-                });
-
-                weeklyPlan.appendChild(dayDiv);
-            }
-
-            if(!hasContent) {
-                weeklyPlan.innerHTML = '<div class="empty-tip">还没有制定本周计划哦~快去选择想吃的食谱吧！</div>';
-            }
-
-            // 绑定删除事件
-            document.querySelectorAll('.del-order').forEach(btn => {
-                btn.onclick = (e) => {
-                    const day = parseInt(e.target.dataset.day);
-                    const meal = e.target.dataset.meal;
-                    const id = parseInt(e.target.dataset.id);
-                    
-                    weeklyPlanData[day][meal] = weeklyPlanData[day][meal].filter(item => item.id !== id);
-                    localStorage.setItem('pregnancyWeeklyPlan', JSON.stringify(weeklyPlanData));
-                    
-                    updateOrderBadge();
-                    renderWeeklyPlan();
-                };
-            });
-
-            // 渲染采购清单
-            renderShoppingList();
-        }
-
-        // 渲染采购清单
-        function renderShoppingList() {
-            shoppingList.innerHTML = '<h3>📋 本周采购清单（自动汇总）</h3>';
-            
-            // 汇总所有食材
-            const ingredientsMap = {};
-            for(let day in weeklyPlanData) {
-                for(let meal in weeklyPlanData[day]) {
-                    weeklyPlanData[day][meal].forEach(recipe => {
-                        recipe.ingredients.forEach(ing => {
-                            if(ingredientsMap[ing.name]) {
-                                ingredientsMap[ing.name].push(ing.amount);
-                            } else {
-                                ingredientsMap[ing.name] = [ing.amount];
-                            }
-                        });
-                    });
-                }
-            }
-
-            // 检查是否有食材
-            if(Object.keys(ingredientsMap).length === 0) {
-                shoppingList.innerHTML += '<div class="empty-tip">添加食谱后，这里会自动汇总需要采购的食材~</div>';
-                return;
-            }
-
-            // 渲染食材列表
-            for(let name in ingredientsMap) {
-                const amounts = ingredientsMap[name];
-                const shoppingItem = document.createElement('div');
-                shoppingItem.className = 'shopping-item';
-                shoppingItem.innerHTML = `
-                    <span>${name}</span>
-                    <span>${amounts.join(' + ')}</span>
-                `;
-                shoppingList.appendChild(shoppingItem);
-            }
-        }
-
-        // 分类切换
-        categoryBtns.forEach(btn => {
-            btn.onclick = () => {
-                categoryBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                renderRecipes(btn.dataset.type);
-            };
-        });
-
-        // 底部导航切换
-        tabItems.forEach(tab => {
-            tab.onclick = () => {
-                tabItems.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                const page = tab.dataset.page;
-                recipePage.style.display = page === 'recipe' ? 'block' : 'none';
-                orderPage.style.display = page === 'order' ? 'block' : 'none';
-                minePage.style.display = page === 'mine' ? 'block' : 'none';
-            };
-        });
-
-        // 清空本周计划
-        clearAllBtn.onclick = () => {
-            if(confirm('确定要清空本周所有计划吗？此操作不可恢复！')) {
-                weeklyPlanData = {
-                    1: {breakfast: [], lunch: [], dinner: [], snack: []},
-                    2: {breakfast: [], lunch: [], dinner: [], snack: []},
-                    3: {breakfast: [], lunch: [], dinner: [], snack: []},
-                    4: {breakfast: [], lunch: [], dinner: [], snack: []},
-                    5: {breakfast: [], lunch: [], dinner: [], snack: []}
-                };
-                localStorage.setItem('pregnancyWeeklyPlan', JSON.stringify(weeklyPlanData));
-                updateOrderBadge();
-                renderWeeklyPlan();
-                alert('本周计划已清空！');
-            }
-        };
-
-        // 初始化
-        init();
-    </script>
 </body>
 </html>
